@@ -21,19 +21,11 @@ $Global:LogDir = "$Global:RootDir\BuildLogs"
 $Global:LogFile = "$Global:LogDir\WindowsUpdate.log"
 
 Function _WriteLog ($Msg, $Type) {
-    IF (!(Test-Path "$Global:RootDir")) {MD "$Global:RootDir"}
-    IF (!(Test-Path "$Global:LogDir")) {MD "$Global:LogDir"}
-    IF ($Type -eq "INFO") {Out-File -FilePath "$Global:logFile" -Append -InputObject "$(Get-Date -format g) :: INFO   :: $Msg" ;}
-    IF ($Type -eq "SUCCESS") { Out-File -FilePath "$Global:logFile" -Append -InputObject "$(Get-Date -format g) :: SUCCESS:: $Msg" ;}
-    IF ($Type -eq "ERROR") {Out-File -FilePath "$Global:logFile" -Append -InputObject "$(Get-Date -format g) :: ERROR  :: $Msg" ;}
-    IF ($Type -like "EXIT-*") {
-        $Code = $Type.split("-")[1]
-        Out-File -FilePath "$Global:logFile" -Append -InputObject "$(Get-Date -format g) :: EXIT   :: $Msg"
-        Out-File -FilePath "$Global:logFile" -Append -InputObject "$(Get-Date -format g) :: EXIT   :: ***************************************************"
-        EXIT $Code
-    }
+    IF ($Type -eq "INFO") {Write-Host "$(Get-Date -format g)::INFO    :: $Msg" -ForegroundColor White; Out-File -FilePath "$Global:LogFile" -Append -InputObject "$(Get-Date -format g)::INFO    :: $Msg";}
+    IF ($Type -eq "SUCCESS") {Write-Host "$(Get-Date -format g)::SUCCESS :: $Msg" -ForegroundColor Green; Out-File -FilePath "$Global:LogFile" -Append -InputObject "$(Get-Date -format g)::SUCCESS :: $Msg";}
+    IF ($Type -eq "ERROR") {Write-Host "$(Get-Date -format g)::ERROR   :: $Msg" -ForegroundColor Red; Out-File -FilePath "$Global:LogFile" -Append -InputObject "$(Get-Date -format g)::ERROR   :: $Msg";}
+    IF ($Type -eq "WARNING") {Write-Host "$(Get-Date -format g)::WARNING :: $Msg" -ForegroundColor Yellow; Out-File -FilePath "$Global:LogFile" -Append -InputObject "$(Get-Date -format g)::WARNING :: $Msg";}
 }
-
 
 ((New-Object -ComObject Microsoft.Update.Session).CreateupdateSearcher().Search("IsInstalled=0 and Type='Software'")).Updates|%{
     if(!$_.EulaAccepted){$_.EulaAccepted=$true}
@@ -48,7 +40,7 @@ if ($WUUpdates.Count -ge 1){
         $UpdateCount = $WUDownloader.Updates.count
         _WriteLog -Msg "Downloading $UpdateCount Updates" -Type "INFO";
         
-            foreach ($update in $WUInstaller.Updates){Write-Output "$($update.Title)"}
+            foreach ($update in $WUInstaller.Updates){_WriteLog -Msg "$($update.Title)" -Type "INFO"}
             $Download = $WUDownloader.Download()
             if ($Download.HResult -ne 0){
                 $Convert = $Install.HResult
