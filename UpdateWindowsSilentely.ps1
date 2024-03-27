@@ -21,6 +21,8 @@ $Global:LogDir = "$Global:RootDir\BuildLogs"
 $Global:LogFile = "$Global:LogDir\WindowsUpdate.log"
 
 Function _WriteLog ($Msg, $Type) {
+    IF (!(Test-Path "$Global:RootDir")) {MD "$Global:RootDir"}
+    IF (!(Test-Path "$Global:LogDir")) {MD "$Global:LogDir"}
     IF ($Type -eq "INFO") {Write-Host "$(Get-Date -format g)::INFO    :: $Msg" -ForegroundColor White; Out-File -FilePath "$Global:LogFile" -Append -InputObject "$(Get-Date -format g)::INFO    :: $Msg";}
     IF ($Type -eq "SUCCESS") {Write-Host "$(Get-Date -format g)::SUCCESS :: $Msg" -ForegroundColor Green; Out-File -FilePath "$Global:LogFile" -Append -InputObject "$(Get-Date -format g)::SUCCESS :: $Msg";}
     IF ($Type -eq "ERROR") {Write-Host "$(Get-Date -format g)::ERROR   :: $Msg" -ForegroundColor Red; Out-File -FilePath "$Global:LogFile" -Append -InputObject "$(Get-Date -format g)::ERROR   :: $Msg";}
