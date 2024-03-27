@@ -1,10 +1,9 @@
-﻿<# 
-Powershell script to check and Install Windows update silently
-Process runs silentely without User intervention 
-Generates Log file
-Reboot is not enforced
-Build for DWS lab Use 
-#>
+#Powershell script to check and Install Windows update silently
+#Process runs silentely without User intervention 
+#Generates Log file
+#Reboot is not enforced
+#Build for DWS lab Use 
+
 $Results = @(
 @{ ResultCode = '0'; Meaning = "Not Started"}
 @{ ResultCode = '1'; Meaning = "In Progress"}
